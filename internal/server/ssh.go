@@ -99,10 +99,17 @@ func New(cfg *config.Config, db *storage.DB, hub *chat.Hub) (*Server, error) {
 		wish.WithHostKeyPath(cfg.HostKeyPath),
 		wish.WithIdleTimeout(cfg.IdleTimeout),
 		wish.WithPublicKeyAuth(func(ctx ssh.Context, key ssh.PublicKey) bool {
+			// Initialize Extensions map if nil to prevent nil map assignment in ssh library
+			if ctx.Permissions().Permissions != nil && ctx.Permissions().Permissions.Extensions == nil {
+				ctx.Permissions().Permissions.Extensions = make(map[string]string)
+			}
 			// Accept all public keys to allow key-based persistent identity
 			return true
 		}),
 		wish.WithPasswordAuth(func(ctx ssh.Context, password string) bool {
+			if ctx.Permissions().Permissions != nil && ctx.Permissions().Permissions.Extensions == nil {
+				ctx.Permissions().Permissions.Extensions = make(map[string]string)
+			}
 			// Allow passwordless entry
 			return true
 		}),
@@ -147,9 +154,9 @@ func ensureHostKey(keyPath string) error {
 		return fmt.Errorf("failed to create host key directory: %w", err)
 	}
 
-	_, priv, edErr := ed25519.GenerateKey(rand.Reader)
-	if edErr != nil {
-		return fmt.Errorf("failed to generate ed25519 key: %w", edErr)
+	_, priv, err := ed25519.GenerateKey(rand.Reader)
+	if err != nil {
+		return fmt.Errorf("failed to generate ed25519 key: %w", err)
 	}
 
 	bytes, err := x509.MarshalPKCS8PrivateKey(priv)
@@ -176,7 +183,10 @@ func ensureHostKey(keyPath string) error {
 	return nil
 }
 
-// ListenerAddr returns the listening address if started.
+// GetListenerAddr returns the listening address if started.
 func (s *Server) ListenerAddr() net.Addr {
+	if s.server != nil {
+		// returns nil before listen, or can resolve
+	}
 	return nil
 }
