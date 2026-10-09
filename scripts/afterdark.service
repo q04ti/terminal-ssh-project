@@ -1,0 +1,34 @@
+[Unit]
+Description=AFTERDARK SSH Network Daemon
+After=network.target
+
+[Service]
+Type=simple
+User=afterdark
+Group=afterdark
+WorkingDirectory=/var/lib/afterdark
+ExecStart=/usr/local/bin/afterdark
+Restart=always
+RestartSec=5s
+
+# Environment settings
+Environment=PORT=2222
+Environment=HOST=0.0.0.0
+Environment=DATA_DIR=/var/lib/afterdark/data
+Environment=DB_PATH=/var/lib/afterdark/data/afterdark.db
+Environment=HOST_KEY_PATH=/var/lib/afterdark/data/afterdark_ed25519
+Environment=SERVER_NAME="AFTERDARK NODE-0"
+Environment=MAX_CONNECTIONS=200
+Environment=IDLE_TIMEOUT_MINUTES=30
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+
+# Resource limits
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

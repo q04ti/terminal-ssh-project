@@ -1,0 +1,17 @@
+services:
+  afterdark:
+    build: .
+    image: afterdark:latest
+    container_name: afterdark-node
+    restart: unless-stopped
+    ports:
+      - "2222:2222"
+    environment:
+      - PORT=2222
+      - HOST=0.0.0.0
+      - DATA_DIR=/app/data
+      - SERVER_NAME=AFTERDARK NODE-0
+      - MAX_CONNECTIONS=150
+      - IDLE_TIMEOUT_MINUTES=30
+    volumes:
+      - ./data:/app/data
