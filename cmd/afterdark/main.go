@@ -54,7 +54,7 @@ func main() {
 
 	log.Info("=====================================================")
 	log.Info("AFTERDARK NODE IS ONLINE AND AWAITING EXPLORERS")
-	log.Info("Connect via: ssh 127.0.0.1 -p " + os.Getenv("PORT"))
+	log.Info(fmt.Sprintf("Connect via: ssh 127.0.0.1 -p %d", cfg.Port))
 	log.Info("=====================================================")
 
 	<-done
